@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -7,8 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection string — replace YOUR_PASSWORD_HERE with your real password
-const MONGO_URI =
-  "mongodb+srv://pavank01437:YOUR_PASSWORD_HERE@instagram-login.vbztrin.mongodb.net/instagram?appName=Instagram-login";
+const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware
 app.use(cors());
